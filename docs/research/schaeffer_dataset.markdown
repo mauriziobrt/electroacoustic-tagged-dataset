@@ -1,9 +1,6 @@
 ---
 layout: post
-date:   2024-02-20 12:11:54 +0200
-categories: research
-title: "The SCHAEFFER dataset"
-media: dataset
+#title: schaeffer-dataset
 permalink: /research/schaeffer-dataset/
 ---
 

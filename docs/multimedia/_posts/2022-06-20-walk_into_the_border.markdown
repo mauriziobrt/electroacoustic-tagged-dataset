@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Walk Into The Border (ActionAid)"
-date:   2022-06-20 12:11:54 +0200
+date:   2021-09-09 12:11:54 +0200
 categories: multimedia
 media: Soundwalk
 work: Recording, Composition, Sound Design
