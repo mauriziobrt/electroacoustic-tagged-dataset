@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: "en" }}">
-  <link rel="stylesheet" href="assets/styles.css">
-  <!-- {%- include header.html -%} -->
-  <body>
+<head>
+    <link rel="stylesheet" href="{{ site.baseurl }}/assets/styles.css">
+</head>
+<body>
     <main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        {{ content }}
-        <!-- {% include cookie-consent.html %} -->
-        
-      </div>
+        <div class="wrapper">
+            {{ content }}
+        </div>
     </main>
-  </body>
+</body>
 </html>
