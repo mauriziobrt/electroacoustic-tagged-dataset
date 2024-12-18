@@ -1,0 +1,55 @@
+<header class="site-header">
+<div class="dropdown">
+    {%- assign default_paths = site.pages | map: "path" -%}
+    {%- assign page_paths = site.header_pages | default: default_paths -%}
+    {%- assign titles_size = site.pages | map: 'title' | join: '' | size -%}
+    <button class="dropbtn"><img src="images/Hamburger_icon.svg" style="height: 30px; width: 20px;"></button>
+    <div class="dropdown-content">
+        {%- for path in page_paths -%}
+            {%- assign my_page = site.pages | where: "path", path | first -%}
+            {%- if my_page.title -%}
+            <a class="page-link" href="{{ my_page.url | relative_url }}">{{ my_page.title | escape }}</a>
+            {%- endif -%}
+        {%- endfor -%}
+    </br>
+</br>
+</br>
+</br>
+
+–––––––––
+
+</br>
+</br>
+</br>
+
+Agriturismo Il Cavedano Innamorato
+
+</br>
+</br>
+</br>
+
+0039 338 2394063
+
+
+</div>
+
+</div> 
+<div class="wrapper">
+    {%- assign default_paths = site.pages | map: "path" -%}
+    {%- assign page_paths = site.header_pages | default: default_paths -%}
+    {%- assign titles_size = site.pages | map: 'title' | join: '' | size -%}
+    <a class="site-title" rel="author" href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
+    {%- if titles_size > 0 -%}
+    <nav class="site-nav">
+        <div class="trigger">
+        {%- for path in page_paths -%}
+            {%- assign my_page = site.pages | where: "path", path | first -%}
+            {%- if my_page.title -%}
+            <a class="page-link" href="{{ my_page.url | relative_url }}">{{ my_page.title | escape }}</a>
+            {%- endif -%}
+        {%- endfor -%}
+        </div>    
+    </nav>
+    {%- endif -%}
+</div>
+</header>

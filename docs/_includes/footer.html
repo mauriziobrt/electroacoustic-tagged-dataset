@@ -1,0 +1,54 @@
+<footer class="site-footer">
+    <data class="u-url" href="{{ "/" | relative_url }}"></data>
+    <div class="wrapper">
+      <div class="footer-col-wrapper">
+        <div class="footer-col">
+          <div class="responsive-three-column-grid">
+            <div>INFO <hr style='margin-top:0.1em' /> Agriturismo Il Cavedano Innamorato<br>
+              Via Magliani,<br>
+              18020, Dolcedo(IM), Italia
+              <br><br>
+              FEEL FREE TO WRITE US AN EMAIL:
+              <br><br>
+              <a href="mailto:info@cavedanoinnamorato.it">info@cavedanoinnamorato.it</a>
+              
+              <br><br>
+              OR TO TEXT OR CALL US ON WHATSAPP:
+              <br><br>
+              <a href="tel:0039 338 9086970">0039 338 9086970</a>
+              </div>
+            <div>LEGAL<hr style='margin-top:0.1em' /> Privacy & Cookie Policy <br><br>
+              CITR: 008031-AGR-0013
+              </div>
+            <div>FOLLOW US<hr style='margin-top:0.1em' /> Instagram</div>
+          </div>
+          © Agriturismo Il Cavedano Innamorato
+          <!--<p class="feed-subscribe">
+            <a href="{{ site.feed.path | default: 'feed.xml' | absolute_url }}">
+              <svg class="svg-icon orange">
+                <use xlink:href="{{ 'assets/minima-social-icons.svg#rss' | relative_url }}"></use>
+              </svg><span>Subscribe</span>
+            </a>
+          </p>
+        -->
+        {%- if site.author %}
+          <ul class="contact-list">
+            {% if site.author.name -%}
+              <li class="p-name">{{ site.author.name | escape }}</li>
+            {% endif -%}
+            {% if site.author.email -%}
+              <li><a class="u-email" href="mailto:{{ site.author.email }}">{{ site.author.email }}</a></li>
+            {%- endif %}
+          </ul>
+        {%- endif %}
+        </div>
+        <div class="footer-col">
+          <p>{{ site.description | escape }}</p>
+        </div>
+      </div>
+      
+      <div class="social-links">
+      </div>
+  
+    </div>
+  </footer>

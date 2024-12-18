@@ -37,4 +37,9 @@ software: Browser
 
 [AUDIO PLUGIN DEVELOPMENT RESOURCES](https://github.com/jareddrayton/Audio-Plugin-Development-Resources)
 
+[DSP Resources](https://github.com/prandoni/COM303/tree/master)
+
+[DSP Archive](https://dsparchive.neocities.org/)
+
+[Past Computer Music](https://medium.com/@dsparchive/music-on-the-computer-on-homogeneity-61655d8decd6)
 

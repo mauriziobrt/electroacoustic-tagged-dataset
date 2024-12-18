@@ -1,0 +1,95 @@
+---
+title: Home
+layout: default
+---
+
+<link rel="stylesheet" href="assets/styles.css">
+
+<div class="container">
+    
+    <div class="wrapper">
+        <header class="header">maurizio_berta</header>
+    </div>
+
+    <div class="wrapper">
+        
+        <article class="main"><p style="font-size: 20px; font-family: MyCustomFont;">Maurizio Berta is a music composer, researcher and software developer specialising in machine learning, computer assisted composition and sonification of software processes.</p>
+        <p    style=" color: rgb(116, 109, 109);">He is currently a PhD Student at the <a href="https://www.kth.se/">Royal Institute of Technology</a> in Stockholm as part of the project <a href="">"The sound of the invisible: Methods for communicating complex and inaccessible information through sound"</a>.<br>
+            He graduated with a Master's degree in Electronic Music from the Conservatory G.Verdi of Turin and holds a Bachelor degree in Electronic Music for the Audiovisual from the "Civica Scuola di Musica Claudio Abbado", Milan. <br>
+            Collaborated for several years with the theater association InLuogo and director Valeria Fornoni.
+            He studied with A. Agostini, A. Valle, D. Ghisi, D. Sciajno, S. Bassanese. <br>
+            Followed masterclasses by Alvin Curran, Bjarni Gunnarsson, Mauro Lanza, Yann Orlarey, Michele Tadini, Kees Taazelar, Walter Grimmer.
+        </p>  
+        </article>
+        <aside class="aside aside-1"><p>Bio</p></aside>
+    </div>
+    <div class="wrapper">
+        <article class="main" style="font-family: MyCustomFont;"">
+            <p>
+                {% for my_post in site.categories.coding -%}
+                {% if my_post.title -%}
+                 {{ my_post.date | date: "%Y" }} - <a href="{{ my_post.url }}">{{ my_post.title }}</a>  /////////// {{ my_post.software }}  <br>
+                {% endif %}
+                {%- endfor -%}
+            </p>
+        </article>
+        <aside class="aside aside-2"><hr><p style="letter-spacing: .1rem">coding</p></aside>
+        <aside class="aside aside-1"><p>Works</p></aside>
+    </div>
+    <div class="wrapper">
+        <article class="main" style="font-family: MyCustomFont;"">
+            <p>
+                {% for my_post in site.categories.compositions -%}
+                {% if my_post.title -%}
+                {{ my_post.date | date: "%Y" }} - <a href="{{ my_post.url }}">{{ my_post.title }}</a> \\\\\\\\\\\  {{ my_post.formation }}  <br>
+                {% endif %}
+                {%- endfor -%}
+            </p>
+        </article>
+        <aside class="aside aside-2"><hr><p style="letter-spacing: .1rem">compositions</p></aside>
+        <aside class="aside aside-1"><p></p></aside>
+    </div>
+    <div class="wrapper">
+        <article class="main" style="font-family: MyCustomFont;"">
+            <p>
+                {% for my_post in site.categories.multimedia -%}
+                {% if my_post.title -%}
+                {{ my_post.date | date: "%Y" }} - <a href="{{ my_post.url }}">{{ my_post.title }}</a>  /////////// {{ my_post.media }}  <br>
+                {% endif %}
+                {%- endfor -%}
+            </p>
+        </article>
+        <aside class="aside aside-2"><hr><p style="letter-spacing: .1rem">multimedia</p></aside>
+        <aside class="aside aside-1"><p></p></aside>
+    </div>
+    <div class="wrapper">
+        <article class="main">
+            <p>
+                {% for my_post in site.categories.teaching -%}
+                {% if my_post.title -%}
+                 {{ my_post.date | date: "%Y" }} - <a href="{{ my_post.url }}">{{ my_post.title }}</a> \\\\\\\\\\\ {{ my_post.software }}  <br>
+                {% endif %}
+                {%- endfor -%}
+            </p>
+        </article>
+        <aside class="aside aside-2"><p style="letter-spacing: .1rem">teaching</p></aside>
+        <aside class="aside aside-1"><p></p></aside>
+    </div>
+    <div class="wrapper">
+        <article class="main">
+            <p>
+                {% for my_post in site.categories.research -%}
+                {% if my_post.title -%}
+                 {{ my_post.date | date: "%Y" }} - <a href="{{ my_post.url }}">{{ my_post.title }}</a> /////////// {{ my_post.media }}  <br>
+                {% endif %}
+                {%- endfor -%}
+            </p>
+        </article>
+        <aside class="aside aside-2"><p>research</p></aside>
+        <aside class="aside aside-1"><p></p></aside>
+    </div>
+</div>
+<!-- |Year |Title  | Software |
+|---|---| -->
+
+  
