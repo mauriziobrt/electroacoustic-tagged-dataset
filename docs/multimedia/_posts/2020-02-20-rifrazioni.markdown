@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Rifrazioni"
-date:   2023-02-20 12:11:54 +0200
+date:   2023-09-01 12:11:54 +0200
 categories: multimedia
 media: SoundWalk
 work: Recording, Composition, Sound Design
