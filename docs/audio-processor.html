@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Processor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/7.7.3/wavesurfer.min.js"></script>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #waveform {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        #timeControls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+        }
+        #status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Audio Processor</h1>
+        
+        <div class="section">
+            <h2>1. Upload Audio</h2>
+            <input type="file" id="audioInput" accept="audio/*">
+            <div id="status"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. Edit Audio</h2>
+            <div id="waveform"></div>
+            <div class="controls">
+                <button id="playButton" disabled>Play/Pause</button>
+                <div id="timeControls">
+                    <label>Start: <input type="number" id="startTime" value="0" step="0.1" disabled></label>
+                    <label>End: <input type="number" id="endTime" value="0" step="0.1" disabled></label>
+                    <button id="cropButton" disabled>Crop</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>3. Analyze Audio</h2>
+            <textarea id="analysis" placeholder="Describe the audio..."></textarea>
+        </div>
+
+        <div class="section">
+            <h2>4. Download</h2>
+            <button id="downloadButton" disabled>Download Processed Audio</button>
+        </div>
+    </div>
+
+    <script>
+        let wavesurfer = null;
+        let audioBlob = null;
+        let audioContext = null;
+        let audioBuffer = null;
+        let croppedAudioBuffer = null;
+        const statusElement = document.getElementById('status');
+        
+        function showStatus(message, isError = false) {
+            statusElement.textContent = message;
+            statusElement.style.display = 'block';
+            statusElement.className = isError ? 'error' : 'success';
+        }
+
+        function initWaveSurfer() {
+            if (wavesurfer) {
+                wavesurfer.destroy();
+            }
+
+            wavesurfer = WaveSurfer.create({
+                container: '#waveform',
+                waveColor: '#4CAF50',
+                progressColor: '#2E7D32',
+                height: 100,
+                normalize: true,
+                minPxPerSec: 50,
+            });
+
+            wavesurfer.on('ready', function() {
+                showStatus('Audio loaded successfully!', false);
+                document.getElementById('playButton').disabled = false;
+                document.getElementById('startTime').disabled = false;
+                document.getElementById('endTime').disabled = false;
+                document.getElementById('cropButton').disabled = false;
+                document.getElementById('downloadButton').disabled = false;
+                
+                const duration = wavesurfer.getDuration();
+                document.getElementById('endTime').value = duration.toFixed(1);
+            });
+
+            wavesurfer.on('error', function(err) {
+                showStatus('Error loading audio: ' + err, true);
+            });
+        }
+
+        async function cropAudio(audioBuffer, start, end) {
+            const sampleRate = audioBuffer.sampleRate;
+            const channels = audioBuffer.numberOfChannels;
+            const startSample = Math.floor(start * sampleRate);
+            const endSample = Math.floor(end * sampleRate);
+            const length = endSample - startSample;
+
+            const newAudioBuffer = new AudioContext().createBuffer(
+                channels,
+                length,
+                sampleRate
+            );
+
+            for (let channel = 0; channel < channels; channel++) {
+                const newChannelData = newAudioBuffer.getChannelData(channel);
+                const originalChannelData = audioBuffer.getChannelData(channel);
+                for (let i = 0; i < length; i++) {
+                    newChannelData[i] = originalChannelData[startSample + i];
+                }
+            }
+
+            return newAudioBuffer;
+        }
+
+        async function audioBufferToBlob(audioBuffer) {
+            const wavEncoder = new WavEncoder(audioBuffer.sampleRate, audioBuffer.numberOfChannels);
+            const audioData = [];
+            
+            for (let channel = 0; channel < audioBuffer.numberOfChannels; channel++) {
+                audioData.push(audioBuffer.getChannelData(channel));
+            }
+            
+            const wavBytes = wavEncoder.encode(audioData);
+            return new Blob([wavBytes], { type: 'audio/wav' });
+        }
+
+        // Initialize WaveSurfer on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initWaveSurfer();
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        });
+
+        // Handle file upload
+        document.getElementById('audioInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('audio/')) {
+                    showStatus('Please upload an audio file', true);
+                    return;
+                }
+
+                showStatus('Loading audio...', false);
+                
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                    audioBlob = file;
+                    
+                    // Initialize WaveSurfer with the file
+                    initWaveSurfer();
+                    wavesurfer.loadBlob(file);
+                } catch (error) {
+                    showStatus('Error loading audio: ' + error, true);
+                }
+            }
+        });
+
+        // Play/Pause button
+        document.getElementById('playButton').addEventListener('click', function() {
+            if (wavesurfer) {
+                wavesurfer.playPause();
+            }
+        });
+
+        // Crop button
+        document.getElementById('cropButton').addEventListener('click', async function() {
+            const start = parseFloat(document.getElementById('startTime').value);
+            const end = parseFloat(document.getElementById('endTime').value);
+            
+            if (wavesurfer && audioBuffer && start >= 0 && end > start && end <= wavesurfer.getDuration()) {
+                showStatus('Cropping audio...', false);
+                
+                try {
+                    // Crop the audio buffer
+                    croppedAudioBuffer = await cropAudio(audioBuffer, start, end);
+                    
+                    // Convert cropped buffer to blob
+                    const croppedBlob = await audioBufferToBlob(croppedAudioBuffer);
+                    
+                    // Reload wavesurfer with cropped audio
+                    audioBlob = croppedBlob;
+                    wavesurfer.loadBlob(croppedBlob);
+                    
+                    showStatus('Audio cropped successfully!', false);
+                } catch (error) {
+                    showStatus('Error cropping audio: ' + error, true);
+                }
+            } else {
+                showStatus('Please enter valid start and end times', true);
+            }
+        });
+
+        // Download button
+        document.getElementById('downloadButton').addEventListener('click', function() {
+            if (!audioBlob) {
+                showStatus('No audio file to download', true);
+                return;
+            }
+
+            const analysis = document.getElementById('analysis').value;
+            
+            // Download audio
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(audioBlob);
+            link.download = 'processed_audio.wav';
+            link.click();
+            
+            // Save analysis if it exists
+            if (analysis.trim()) {
+                const analysisBlob = new Blob([analysis], { type: 'text/plain' });
+                const analysisLink = document.createElement('a');
+                analysisLink.href = URL.createObjectURL(analysisBlob);
+                analysisLink.download = 'audio_analysis.txt';
+                analysisLink.click();
+            }
+
+            showStatus('Files downloaded successfully!', false);
+        });
+
+        // Simple WAV encoder
+        class WavEncoder {
+            constructor(sampleRate, numChannels) {
+                this.sampleRate = sampleRate;
+                this.numChannels = numChannels;
+            }
+
+            encode(audioData) {
+                const buffer = new ArrayBuffer(44 + audioData[0].length * 2 * this.numChannels);
+                const view = new DataView(buffer);
+
+                // Write WAV header
+                this.writeString(view, 0, 'RIFF');
+                view.setUint32(4, 36 + audioData[0].length * 2 * this.numChannels, true);
+                this.writeString(view, 8, 'WAVE');
+                this.writeString(view, 12, 'fmt ');
+                view.setUint32(16, 16, true);
+                view.setUint16(20, 1, true);
+                view.setUint16(22, this.numChannels, true);
+                view.setUint32(24, this.sampleRate, true);
+                view.setUint32(28, this.sampleRate * 2 * this.numChannels, true);
+                view.setUint16(32, this.numChannels * 2, true);
+                view.setUint16(34, 16, true);
+                this.writeString(view, 36, 'data');
+                view.setUint32(40, audioData[0].length * 2 * this.numChannels, true);
+
+                // Write audio data
+                const offset = 44;
+                for (let i = 0; i < audioData[0].length; i++) {
+                    for (let channel = 0; channel < this.numChannels; channel++) {
+                        const sample = Math.max(-1, Math.min(1, audioData[channel][i]));
+                        view.setInt16(offset + (i * this.numChannels + channel) * 2, sample * 0x7FFF, true);
+                    }
+                }
+
+                return buffer;
+            }
+
+            writeString(view, offset, string) {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            }
+        }
+    </script>
+</body>
+</html>
